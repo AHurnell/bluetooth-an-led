@@ -1,4 +1,4 @@
-# bluetooth-an-led
+# Bluetooth-an-led
 Code for a particle mesh device to blink an LED and broadcast the LED status, as well some arbitrary information, over bluetooth
 
 
