@@ -53,7 +53,7 @@ void updateAdvertisingData(bool updateOnly)
   // Copy information into the buffer
   memcpy(&buf[offset], &arbitraryInformation, 4); // think this makes a sequence of bytes, it is vital.
   offset += 4;
-  advData.appendLocalName("BC");
+  advData.appendLocalName("BC");//using this local name generates bytes "03:09:42:43" in the UART raw data. Using "BB" as a name generates "03:09:42:42" 
   advData.appendCustomData(buf, offset);
 
   if (updateOnly)
