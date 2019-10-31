@@ -4,9 +4,8 @@
 
 const size_t SCAN_RESULT_MAX = 30;
 
-//#define PRINT_SPEED 7005 // 20 ms between prints
 
-//SYSTEM_MODE(MANUAL);//disables wifi
+//SYSTEM_MODE(MANUAL);//if the comment on this line is removed it disables wifi
 
 BleScanResult scanResults[SCAN_RESULT_MAX];
 BleUuid fitnessMachineService(0x1826); //a uuid advertises the type of device, this example is a fitness machine
@@ -50,22 +49,37 @@ void updateAdvertisingData(bool updateOnly)
   else{
     buf[offset++] = 0x00;// think each time you do this you increast the "offset"
   }
+  
   // Copy information into the buffer
-  memcpy(&buf[offset], &arbitraryInformation, 4); // think this makes a sequence of bytes, it is vital.
+  memcpy(&buf[offset], &arbitraryInformation, 4); // this is vital.
   offset += 4;
-  advData.appendLocalName("BC");//using this local name generates bytes "03:09:42:43" in the UART raw data. Using "BB" as a name generates "03:09:42:42" 
+  advData.appendLocalName("BC");
   advData.appendCustomData(buf, offset);
 
+
+  //next section monitors your device, see the outputs on the particle console
   if (updateOnly)
   {
     // Only update data
     BLE.setAdvertisingData(&advData);
-    Particle.publish("Light status", String(lightOn)+" "+offset);//used for monitoring the buffer size
+    Particle.publish("Light status", String(lightOn)+" "+offset+" "+arbitraryInformation);//used for monitoring the buffer size and outputing the information 
   }
   else
   {
     BLE.setAdvertisingInterval(interval);
     BLE.advertise(&advData);
-    Particle.publish("something else", " is happening"+offset);
+    Particle.publish("something else", " is happening ");
   }
 }
+
+/*
+The first three bytes of raw data are not controlled by this file
+
+The next 4 bytes indicate the local name, as the length of the name increases, the number of bytes used also increases. Currently "03 09 42 43"
+
+The origin of the next two bytes is unclear
+
+The next byte is the either 00 or 01 depending on the LED status
+
+The next 4 bytes represent the arbitrary information
+*/
